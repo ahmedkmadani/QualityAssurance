@@ -1,54 +1,77 @@
 package com.farmula.io.qualityassurance;
 
 import android.Manifest;
-import android.gesture.Prediction;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.hardware.display.DisplayManager;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.PermissionChecker;
+import android.os.Handler;
 import android.text.TextPaint;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.xlythe.fragment.camera.CameraFragment;
+import com.xlythe.view.camera.CameraView;
+import com.xlythe.view.camera.PermissionChecker;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN;
 
 public class CustomCameraFragment extends Fragment {
     private static final String[] REQUIRED_PERMISSIONS;
     private static final String[] OPTIONAL_PERMISSIONS;
     private static final int REQUEST_CODE_PERMISSIONS = 10;
+
     static {
         // In KitKat+, WRITE_EXTERNAL_STORAGE is optional
         if (Build.VERSION.SDK_INT >= 19) {
-            REQUIRED_PERMISSIONS = new String[] {
+            REQUIRED_PERMISSIONS = new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.RECORD_AUDIO
             };
-            OPTIONAL_PERMISSIONS = new String[] {
+            OPTIONAL_PERMISSIONS = new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.VIBRATE
             };
         } else {
-            REQUIRED_PERMISSIONS = new String[] {
+            REQUIRED_PERMISSIONS = new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             };
-            OPTIONAL_PERMISSIONS = new String[] {
+            OPTIONAL_PERMISSIONS = new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.VIBRATE
             };
@@ -78,25 +101,25 @@ public class CustomCameraFragment extends Fragment {
             Matrix matrix = textureView.getTransform(null);
             float[] values = new float[9];
             matrix.getValues(values);
-            int newWidth =  textureView.getWidth() - (int)values[2] * 2;
-            int newHeight =  textureView.getHeight() - (int)values[5] * 2;
+            int newWidth = textureView.getWidth() - (int) values[2] * 2;
+            int newHeight = textureView.getHeight() - (int) values[5] * 2;
 
             // Get the image and classify it.
             Bitmap bitmap = textureView.getBitmap(newWidth, newHeight);
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, ImageClassifier.DIM_IMG_SIZE_X,  ImageClassifier.DIM_IMG_SIZE_Y, false);
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, ImageClassifier.DIM_IMG_SIZE_X, ImageClassifier.DIM_IMG_SIZE_Y, false);
             List<Prediction> predictions = mClassifier.classifyFrame(scaled);
 
             float dpi = getResources().getDisplayMetrics().density;
 
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint();
-            paint.setColor(Color.rgb(36,101,255));
+            paint.setColor(Color.rgb(36, 101, 255));
             paint.setStyle(Paint.Style.STROKE);
             paint.setAntiAlias(true);
             paint.setStrokeWidth(dpi * 3);
 
             Paint labelPaint = new Paint();
-            labelPaint.setColor(Color.rgb(36,101,255));
+            labelPaint.setColor(Color.rgb(36, 101, 255));
             labelPaint.setStyle(Paint.Style.FILL);
             labelPaint.setAntiAlias(true);
 
@@ -109,10 +132,10 @@ public class CustomCameraFragment extends Fragment {
                 float boxLeft = prediction.bbox.x * canvas.getWidth();
                 float boxTop = prediction.bbox.y * canvas.getHeight();
                 float boxRight = (prediction.bbox.x + prediction.bbox.width) * canvas.getWidth();
-                float boxBottom =(prediction.bbox.y + prediction.bbox.height) * canvas.getHeight();
+                float boxBottom = (prediction.bbox.y + prediction.bbox.height) * canvas.getHeight();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    canvas.drawRoundRect(boxLeft, boxTop, boxRight, boxBottom,dpi * 6, dpi * 6, paint);
+                    canvas.drawRoundRect(boxLeft, boxTop, boxRight, boxBottom, dpi * 6, dpi * 6, paint);
                 }
             }
 
@@ -240,3 +263,5 @@ public class CustomCameraFragment extends Fragment {
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }
+
+}
