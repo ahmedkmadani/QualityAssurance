@@ -1,52 +1,32 @@
 package com.farmula.io.qualityassurance;
 
 import android.Manifest;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
-import android.hardware.display.DisplayManager;
-import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextPaint;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.xlythe.fragment.camera.CameraFragment;
-import com.xlythe.view.camera.CameraView;
-import com.xlythe.view.camera.PermissionChecker;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
-import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN;
+import com.xlythe.view.camera.CameraView;
+import com.xlythe.view.camera.PermissionChecker;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 public class CustomCameraFragment extends Fragment {
     private static final String[] REQUIRED_PERMISSIONS;
